@@ -1,0 +1,30 @@
+version: '3.1'
+
+services: 
+  
+  nginx:
+    image: nginx:latest
+    container_name: vueworld_nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./logs/nginx:/var/log/nginx
+      - .:/var/www/html/
+    environment:
+      - NGINX_HOST=vueworld.test
+      - NGINX_PORT=80
+    # command: /bin/bash -c "envsubst < /etc/nginx/conf.d/grab-asset-portal.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+    links:
+        - php
+    restart: "no"
+    # docker run --name some-wordpress --link=some-mysql:mysql -e WORDPRESS_DB_NAME=some_wordpress -v /var/docker/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini -v /var/docker/phpinfo.php:/var/www/html/phpinfo.php -p 8081:80  -d wordpress
+  php:
+    image: php:7.3-fpm
+    container_name: vueworld_php
+    restart: "no"
+    ports:
+      - 9000:9000
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html/  
