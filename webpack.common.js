@@ -25,7 +25,7 @@ const cssLoader = {
 cssLoader.options = {
    // minimize: true
       // enable CSS Modules
-      modules: true,
+      // modules: true,
       // customize generated class names
       // localIdentName: '[local]_[hash:base64:8]',
       sourceMap: true,
@@ -187,9 +187,7 @@ module.exports = {
     // extensions: ['.hbs'],
     modules: ['node_modules'],
     alias: {
-      // 'owl.carousel': './src/js/owl.carousel.min.js',
-      // 'waypoints': './src/js/jquery.waypoints.min.js',   
-      // 'jquery.counterup': 'jquery.counterup/jquery.counterup.js'      
+      'vue$': 'vue/dist/vue.esm.js' // 'vue/dist/vue.common.js' for webpack 1
     }
   },
 

@@ -14,5 +14,7 @@ import Monster from "./src/components/Monster.vue";
 
 
 new Vue({
-	render: (createEl) => createEl(Monster),	
+	render: (createEl) => createEl(Monster),
+
 }).$mount("#app");
+
