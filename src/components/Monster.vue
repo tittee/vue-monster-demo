@@ -13,7 +13,8 @@
 			<div class="small-6 columns">
 				<h1 class="text-center">MONSTER</h1>
 				<div class="healthbar">
-					<div class="healthbar text-center" style="background-color: green; margin: 0; color: white;">
+					<div class="healthbar text-center" style="background-color: green; margin: 0; color: white;"
+						:style="{width: monsterHealth + '%'}">
 						{{ monsterHealth }}
 					</div>
 				</div>
@@ -32,10 +33,12 @@
 				<button id="give-up" @click="giveUp">GIVE UP</button>
 			</div>
 		</section>
-		<section class="row log">
+		<section class="row log" v-if="turns.length > 0">
 			<div class="small-12 columns">
 				<ul>
-					<li>
+					<li v-for="turn in turns"
+						:class="{'player-turn': turn.isPlayer, 'monster-turn': !turn.isPlayer}">
+						{{ turn.text }}
 					</li>
 				</ul>
 			</div>
@@ -52,6 +55,7 @@
 	      playerHealth: 100,
 				monsterHealth: 100,
 				gameIsRunning: false,
+				turns: []
 	    }
 	  },
 	  methods: {
@@ -59,33 +63,82 @@
 	     	this.gameIsRunning = true;
 				this.playerHealth = 100;
 				this.monsterHealth = 100;
+				this.turns = [];
 	    },
-	    attack() {
-	     	var max = 10;
-	     	var min = 3;
-	     	var damage = Math.max(Math.floor(Math.random() * max) + 1, min);
+	    attack() {	     
+	     	var damage = this.calculateDamage(3, 10);
 	     	this.monsterHealth -= damage;
+	     	this.turns.unshift({
+	     		isPlayer: true,
+	     		text: 'Player hits Monster for ' + damage
+	     	})
+	     	if( this.checkWin() ) {
+	     		return;
+	     	}
+	     	this.monsterAttack();
 
-	     	var max = 12;
-	     	var min = 5;
-	     	var damage = Math.max(Math.floor(Math.random() * max) + 1, min);
-	     	this.playerHealth -= damage
 	    },
 	    specialAttack() {
-	     	console.log('Special Attack');
+	     	// console.log('Special Attack');
+	     	var damage = this.calculateDamage(10, 20);
+	     	this.monsterHealth -= damage;
+	     	this.turns.unshift({
+	     		isPlayer: true,
+	     		text: 'Player hits Monster hard for ' + damage
+	     	})
+	     	if( this.checkWin() ) {
+	     		return;
+	     	}
+	     	this.monsterAttack();
+	    },
+	    monsterAttack() {	     	
+	     	var damage = this.calculateDamage(5, 12);
+	     	this.playerHealth -= damage;
+	     	this.checkWin();
+
+	     	this.turns.unshift({
+	     		isPlayer: false,
+	     		text: 'Monster hits Player for ' + damage
+	     	})
+
 	    },
 	    heal(){
-	    	console.log('Heal');
+	    	if( this.playerHealth < 99 ) {
+	    		this.playerHealth += 10;	
+	    	}else{
+	    		this.playerHealth = 100;
+	    	}
+	    	this.turns.unshift({
+	     		isPlayer: true,
+	     		text: 'Player heal for 10'
+	     	})
+	     	this.monsterAttack();
 	    },
 	    giveUp(){
-	    	console.log('Give Up');
+	    	this.gameIsRunning = false;
+	    },
+	    calculateDamage(min, max){
+	    	return Math.max(Math.floor(Math.random() * max) + 1, min);
+	    },
+	    checkWin(){
+	    	if( this.monsterHealth < 1 ) {
+	    		if( confirm('You won! New Game?') ) {
+	    			this.startGame();
+	    		} else {
+	    			this.gameIsRunning = false;
+	    		}
+	    		
+	    	} else if ( this.playerHealth < 1 ) {
+	    		if( confirm('You Lost! New Game?') ) {
+	    			this.startGame();
+	    		} else {
+	    			this.gameIsRunning = false;
+	    		}
+	    		
+	    	}
 	    }
 	  }
 	}
-
-	// function startGame() {
-		
-	// }
 
 	export default myGame
 
